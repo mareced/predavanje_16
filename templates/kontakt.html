@@ -2,7 +2,12 @@
 
 {% block vsebina %}
 <h1>To je kontakt</h1>
-<p>Moj email je: abc@example.com</p>
 
+    <form method="post" action="/poslji-sporocilo">
+        <p>Zadeva: <input name="zadeva"></p>
+        <p>Sporocilo: <input name="sporocilo"></p>
+        <p><button type="submit">Pošlji</button></p>
+
+    </form>
 
 {% endblock %}
