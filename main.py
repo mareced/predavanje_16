@@ -18,9 +18,8 @@ def poslji_sporocilo():
 
      # Toukaj bi shranili te spremenjljivki v bazo
 
-    print ("zadeva je: " + zadeva)
     print ("Sporočilo je: " + sporocilo)
-    return "Hvala za poslano zadevo: " + zadeva
+    return render_template("zadeva.html", zadeva=zadeva)
 
 
 if __name__ == '__main__':
