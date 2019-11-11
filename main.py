@@ -25,6 +25,13 @@ def prijava():
     odgovor.set_cookie("ime", ime)
     return odgovor
 
+@app.route("/komentar", methods=["POST"])
+def poslji_komentar():
+    vsebina_komentarja = request.form.get("vsebina")
+
+    #Tukaj se bo shranil komentar v podatkovno bazo
+
+    return redirect("/")
 
      # Toukaj bi shranili te spremenjljivki v bazo
 
