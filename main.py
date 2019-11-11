@@ -1,20 +1,30 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, make_response
 
 
 app = Flask(__name__)
 
 @app.route("/")
 def prva_stran():
-    return render_template ("prva_stran.html")
+    ime = request.cookies.get("ime")
+    return render_template ("prva_stran.html", ime=ime)
 
 @app.route("/kontakt")
 def kontakt():
-    return render_template("kontakt.html")
+    emaili = ["ime@example.com, ime@gmail.com"]
+    return render_template("kontakt.html", emaili = emaili)
 
 @app.route("/poslji-sporocilo", methods=["POST"])
 def poslji_sporocilo():
     zadeva = request.form.get("zadeva")
     sporocilo = request.form.get("sporocilo")
+
+@app.route("/prijava", methods=["POST"])
+def prijava():
+    ime=request.form.get("ime")
+    odgovor = make_response(redirect("/"))
+    odgovor.set_cookie("ime", ime)
+    return odgovor
+
 
      # Toukaj bi shranili te spremenjljivki v bazo
 
@@ -23,5 +33,5 @@ def poslji_sporocilo():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 
