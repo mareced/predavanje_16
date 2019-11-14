@@ -11,10 +11,16 @@
         <button type="submit">Pošlji</button>
     </form>
 
+    <h2>Komentarji</h2>
+
+    {% for komentar in komentarji %}
+    <p><strong>{{ komentar.avtor }}:</strong> {{ komentar.vsebina }}</p>
+    {% endfor %}
+
 {% else %}
 
     <p>Prijavi se</p>
-    <form method="post" action="/prijava">
+    <form method="POST" action="/prijava">
         <input name="ime" placeholder="Tvoje ime">
         <button type="submit">Prijava</button>
     </form>
