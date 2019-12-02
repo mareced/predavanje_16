@@ -2,7 +2,7 @@ import os
 from sqla_wrapper import SQLAlchemy
 
 
-db = SQLAlchemy(os.getenv("DATABASE_URL", "sqlite:///podatkova-baza.sqlite"))
+db = SQLAlchemy(os.getenv("DATABASE_URL", "sqlite:///podatkova-baza.sqlite?check_same_thread=False"))
 
 
 class Komentar(db.Model):
@@ -17,3 +17,4 @@ class Uporabnik(db.Model):
     email = db.Column(db.String)
     geslo = db.Column(db.String)
     sejna_vrednost = db.Column(db.String)
+    je_blokiran = db.Column(db.Boolean, default=False)

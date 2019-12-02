@@ -1,6 +1,8 @@
 import hashlib
 import random
 import uuid
+import requests
+import json
 from flask import Flask, render_template, request, redirect, make_response
 from modeli import Komentar, db, Uporabnik
 
@@ -87,7 +89,7 @@ def poslji_komentar():
     return redirect("/")
 
 
-@app.route("/skrito-stevilo")
+@app.route("/skrito_stevilo")
 def skrito_stevilo():
     odgovor = make_response(render_template("skrito_stevilo.html"))
 
@@ -158,6 +160,52 @@ def izbrisi_profil():
         odgovor.set_cookie("sejna_vrednost", expires=0)
         return odgovor
 
+@app.route("/uporabniki")
+def uporabniki ():
+    users = db.query(Uporabnik).all()
+    return render_template("uporabniki.html", uporabniki=users)
+
+@app.route("/uporabniki/<uporabnik_id>", methods=["GET", "POST"])
+def prikaz_uporabnika(uporabnik_id):
+    uporabnik = db.query(Uporabnik).filter_by(id=uporabnik_id).first()
+
+    if request.method == "POST":
+        blokiran = False
+        if request.form.get("je_blokiran") == "on":
+            blokiran = True
+
+        uporabnik.je_blokiran = blokiran
+
+        db.add(uporabnik)
+        db.commit()
+    return render_template("prikaz_uporabnika.html", uporabnik=uporabnik)
+
+
+@app.route("/vreme")
+def vreme():
+    mesto = request.args.get("lokacija")
+
+    if mesto:
+        odgovor_geo = json.loads(requests.get("https://geocode.xyz/" + mesto + "?json=1").text)
+        lon = odgovor_geo["longt"]
+        lat = odgovor_geo["latt"]
+
+        # url =  https: // opendata.si / vreme / report /?lat = 47.05 & lon = 12.92 - izhodiščna stran
+        # https://github.com/zejn/arsoapi  išči Primer zahtevka in link
+        url = "https://opendata.si/vreme/report/?lat=" + lat + "&lon=" + lon
+
+    # Alternativni načini
+
+    # url = "https://opendata.si/vreme/report/?lat=%s&lon=%s" % (lat, lon)
+    # url = "https://opendata.si/vreme/report/?lat={}&lon={}".format(lat, lon)
+    # url = f"https://opendata.si/vreme/report/?lat={lat}&lon={lon}"
+
+        odgovor = json.loads(requests.get(url).text)
+        dez = odgovor["forecast"]["data"][0]["rain"]
+    else:
+        dez = None
+
+    return render_template("vreme.html", vreme=dez, mesto=mesto)
 
 if __name__ == '__main__':
     app.run(debug=True)
